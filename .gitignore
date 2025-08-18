@@ -9,6 +9,8 @@ __pycache__/
 *.pyo
 *.pyd
 *.pytest_cache/
+# Allow the main workspace file
+!id-photo-fr.code-workspace
 
 # OS
 .DS_Store
