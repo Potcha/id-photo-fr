@@ -1,0 +1,90 @@
+{
+  "folders": [
+    {"name": "frontend", "path": "frontend"},
+    {"name": "backend", "path": "backend"}
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "python.defaultInterpreterPath": "${workspaceFolder:backend}\\.venv\\Scripts\\python.exe",
+    "black-formatter.interpreter": ["${workspaceFolder:backend}\\.venv\\Scripts\\python.exe"],
+    "[python]": {"editor.defaultFormatter": "ms-python.black-formatter"},
+    "[javascript]": {"editor.defaultFormatter": "esbenp.prettier-vscode"},
+    "[html]": {"editor.defaultFormatter": "esbenp.prettier-vscode"}
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "ms-python.black-formatter",
+      "ms-python.isort",
+      "esbenp.prettier-vscode",
+      "eamodio.gitlens",
+      "ms-azuretools.vscode-docker"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "FastAPI (backend) – debug",
+        "type": "python",
+        "request": "launch",
+        "module": "uvicorn",
+        "args": ["app:app", "--reload", "--host", "0.0.0.0", "--port", "8000"],
+        "cwd": "${workspaceFolder:backend}",
+        "justMyCode": true,
+        "console": "integratedTerminal",
+        "preLaunchTask": "Backend: install deps"
+      },
+      {
+        "name": "Open Frontend in Browser",
+        "type": "pwa-chrome",
+        "request": "launch",
+        "url": "http://localhost:5173",
+        "webRoot": "${workspaceFolder:frontend}"
+      }
+    ],
+    "compounds": [
+      {
+        "name": "Dev: API + Frontend (browser)",
+        "configurations": ["FastAPI (backend) – debug", "Open Frontend in Browser"]
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Backend: install deps",
+        "type": "shell",
+        "options": {"cwd": "${workspaceFolder:backend}"},
+        "command": "python -m venv .venv; .\\.venv\\Scripts\\python -m pip install -r requirements.txt",
+        "linux": {"command": "python3 -m venv .venv; source .venv/bin/activate; pip install -r requirements.txt"},
+        "osx":   {"command": "python3 -m venv .venv; source .venv/bin/activate; pip install -r requirements.txt"}
+      },
+      {
+        "label": "Backend: run (uvicorn)",
+        "type": "shell",
+        "options": {"cwd": "${workspaceFolder:backend}"},
+        "command": ".\\.venv\\Scripts\\python -m uvicorn app:app --reload --host 0.0.0.0 --port 8000",
+        "linux": {"command": "source .venv/bin/activate; uvicorn app:app --reload --host 0.0.0.0 --port 8000"},
+        "osx":   {"command": "source .venv/bin/activate; uvicorn app:app --reload --host 0.0.0.0 --port 8000"}
+      },
+      {
+        "label": "Frontend: serve (python http.server)",
+        "type": "shell",
+        "options": {"cwd": "${workspaceFolder:frontend}"},
+        "command": "python -m http.server 5173",
+        "linux": {"command": "python3 -m http.server 5173"},
+        "osx":   {"command": "python3 -m http.server 5173"}
+      },
+      {
+        "label": "Dev: API + Frontend (servers)",
+        "dependsOrder": "parallel",
+        "dependsOn": ["Backend: run (uvicorn)", "Frontend: serve (python http.server)"]
+      }
+    ]
+  }
+}
