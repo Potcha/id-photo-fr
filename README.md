@@ -24,3 +24,18 @@ py -m http.server 5173
 - La **pipette** envoie `file + samples(x,y)` à `/mask/pipette`. L’API retourne un **PNG** alpha=masque (sujet).
 - La **validation FR** (34 mm cible, 32–36 mm, yeux ±2°) est calculée côté backend (`/validate`).
 - Exports : PNG 300 DPI (35×45), A4, 10×15 / 4×6.
+
+- ## Branches
+- `main` → V1.1 (frontend ↔ backend FastAPI)
+- `v1.0-standalone-html` → V1.0 (HTML autonome)
+
+## Démarrage rapide
+# V1.1
+cd backend && py -m venv .venv ; .\.venv\Scripts\python -m pip install -r requirements.txt
+.\.venv\Scripts\python -m uvicorn app:app --reload --port 8000
+# Nouveau terminal
+cd frontend && py -m http.server 5173
+
+# V1.0
+# Ouvrir index.html directement ou via: py -m http.server 5173
+
