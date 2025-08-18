@@ -1,0 +1,1543 @@
+<!-- Version: V1.0 — 2025-08-18 (baseline gelée) -->
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="./assets/favicon.svg" />
+    <title>Photo d'identité & Passeport – Normes FR (35×45 mm) • V1.0</title>
+    <style>
+      :root {
+        --bg: #0f172a; /*slate-900*/
+        --panel: #111827; /*gray-900*/
+        --muted: #94a3b8; /*slate-400*/
+        --accent: #22c55e; /*green-500*/
+        --accent2: #38bdf8; /*sky-400*/
+        --warn: #f59e0b; /*amber-500*/
+        --danger: #ef4444; /*red-500*/
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+          Cantarell, "Noto Sans", sans-serif;
+        background: linear-gradient(180deg, #0b1224, #0f172a 22%, #0b1224);
+        color: #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        align-items: center;
+        padding: 18px;
+      }
+      header {
+        max-width: 1100px;
+        width: 100%;
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      h1 {
+        font-size: clamp(18px, 4vw, 24px);
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .wrap {
+        max-width: 1100px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 16px;
+      }
+      .panel {
+        background: rgba(17, 24, 39, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 14px;
+        padding: 14px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+      }
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      label.btn,
+      input[type="file"]::file-selector-button,
+      button,
+      .chip {
+        appearance: none;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: #0b1224;
+        color: #e5e7eb;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        cursor: pointer;
+      }
+      input[type="file"] {
+        width: 100%;
+      }
+      label.btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      button.primary {
+        background: linear-gradient(180deg, #10b981, #059669);
+        border-color: transparent;
+      }
+      button.ghost {
+        background: transparent;
+      }
+      button.warn {
+        background: linear-gradient(180deg, #f59e0b, #d97706);
+        border-color: transparent;
+      }
+      button.danger {
+        background: linear-gradient(180deg, #ef4444, #dc2626);
+        border-color: transparent;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .hint {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .kbd {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        background: #0b1224;
+        padding: 1px 6px;
+        border-radius: 6px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+      }
+      .canvasWrap {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 8px;
+      }
+      #preview {
+        background: #e5e7eb;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+          0 40px 80px rgba(0, 0, 0, 0.35);
+      }
+      .legend {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--muted);
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        background: #0b1224;
+        padding: 6px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+      }
+      details {
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 12px;
+        padding: 8px 10px;
+      }
+      details summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      input[type="range"] {
+        width: 100%;
+      }
+      @media (max-width: 980px) {
+        .wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+      .chipRow {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .chipBtn {
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: #0b1224;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        cursor: pointer;
+      }
+      .chipBtn.active {
+        outline: 2px solid var(--accent2);
+      }
+      .activeMode {
+        outline: 2px solid var(--accent2);
+      }
+      .segMeta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>
+          Photo d'identité & Passeport —
+          <span style="color: var(--accent2)">Normes FR</span> (35×45 mm)
+        </h1>
+        <div class="badge" id="versionBadge">
+          Version <b>V1.0</b> — 18 août 2025
+        </div>
+        <div class="subtitle">
+          Export 300 DPI (413×531 px). Ajuste le visage à 32–36 mm
+          (cible 34 mm), fond uni clair conseillé.
+        </div>
+      </div>
+      <div class="badge">
+        Raccourcis : <span class="kbd">1</span> menton ·
+        <span class="kbd">2</span> sommet · <span class="kbd">3</span> œil G ·
+        <span class="kbd">4</span> œil D · <span class="kbd">Esc</span> sort ·
+        <span class="kbd">←→↑↓</span> pan · <span class="kbd">+</span>/<span
+          class="kbd"
+          >−</span
+        > zoom
+      </div>
+    </header>
+
+    <div class="wrap">
+      <!-- CONTROLS -->
+      <section class="panel controls">
+        <div>
+          <label class="btn" for="file">📷 Importer une photo</label>
+          <input id="file" type="file" accept="image/*" />
+          <div class="hint">
+            Prends la photo face caméra, neutre, fond uni clair (gris/bleu),
+            sans ombres.
+          </div>
+        </div>
+
+        <div class="row">
+          <button
+            id="btnChin"
+            title="Maintiens le clic sur l'image et déplace pour ajuster"
+          >
+            Placer le <b>menton</b>
+          </button>
+          <button
+            id="btnCrown"
+            title="Maintiens le clic sur l'image et déplace pour ajuster"
+          >
+            Placer le <b>sommet</b>
+          </button>
+          <button
+            id="btnAuto"
+            class="primary"
+            title="Ajuste l'échelle pour viser 34 mm de menton à sommet"
+          >
+            Auto‑ajuster 34 mm
+          </button>
+        </div>
+
+        <div class="row">
+          <button
+            id="btnEyeL"
+            title="Maintiens le clic pour placer au centre de la pupille"
+          >
+            Œil gauche
+          </button>
+          <button
+            id="btnEyeR"
+            title="Maintiens le clic pour placer au centre de la pupille"
+          >
+            Œil droit
+          </button>
+          <button
+            id="btnAutoEyes"
+            class="ghost"
+            title="Rotation fine pour rendre la ligne des yeux horizontale"
+          >
+            Aligner les yeux
+          </button>
+          <span class="hint">Tolérance ±2°</span>
+        </div>
+
+        <div class="row">
+          <button id="btnZoomIn">Zoom +</button>
+          <button id="btnZoomOut">Zoom −</button>
+          <button id="btnCenter" class="ghost">Centrer</button>
+          <button id="btnRotateL" class="ghost">↶ 90°</button>
+          <button id="btnRotateR" class="ghost">↷ 90°</button>
+          <button id="btnReset" class="warn">Réinitialiser</button>
+        </div>
+
+        <details open>
+          <summary>Rotation fine</summary>
+          <div class="row" style="align-items: center; gap: 8px">
+            <button id="rotMinus">−1°</button>
+            <input
+              id="rotRange"
+              type="range"
+              min="-10"
+              max="10"
+              step="0.1"
+              value="0"
+            />
+            <button id="rotPlus">+1°</button>
+            <span class="hint" id="rotLabel">0.0°</span>
+          </div>
+        </details>
+
+        <details>
+          <summary>Détourage (type « AI Mask »)</summary>
+          <div class="row">
+            <button id="btnPickBg" class="ghost">🎯 Pipette fond +</button>
+            <button id="btnResetSamples" class="ghost">
+              Réinit. échantillons
+            </button>
+            <span class="segMeta"
+              >Échantillons : <b id="sampleCount">0</b></span
+            >
+            <button id="btnDetour" class="primary" disabled>
+              Auto‑détourer
+            </button>
+            <button id="btnClearMask" class="danger" disabled>
+              Effacer détourage
+            </button>
+          </div>
+          <div class="row">
+            <label style="flex: 1">
+              <div class="hint">Tolérance (ΔE LAB)</div>
+              <input
+                id="tolRange"
+                type="range"
+                min="6"
+                max="60"
+                step="1"
+                value="18"
+              />
+            </label>
+            <label style="flex: 1">
+              <div class="hint">Adouci (mm, bord)</div>
+              <input
+                id="softRange"
+                type="range"
+                min="0"
+                max="12"
+                step="1"
+                value="4"
+              />
+            </label>
+            <label
+              class="chip"
+              style="display: flex; align-items: center; gap: 6px"
+            >
+              <input id="showMask" type="checkbox" /> Afficher le masque
+            </label>
+          </div>
+          <div class="row">
+            <button id="btnBrushAdd">🖌️ Pinceau +</button>
+            <button id="btnBrushSub">🧽 Pinceau −</button>
+            <label style="display: flex; align-items: center; gap: 6px">
+              <span class="hint">Taille</span>
+              <input
+                id="brushSize"
+                type="range"
+                min="4"
+                max="60"
+                step="1"
+                value="18"
+              />
+            </label>
+            <button id="btnUndo" disabled>Annuler</button>
+            <button id="btnRedo" disabled>Rétablir</button>
+            <label
+              class="chip"
+              style="display: flex; align-items: center; gap: 6px"
+            >
+              <input id="chkDecontam" type="checkbox" /> Décontaminer bords
+            </label>
+          </div>
+          <div class="hint">
+            Principe : clique la pipette sur plusieurs zones de fond (comme
+            « AI Mask 2 » → multi‑échantillons), ajuste tolérance/adouci, puis
+            corrige au pinceau +/−. Option : décontamination des bords pour
+            réduire les halos.
+          </div>
+        </details>
+
+        <details open>
+          <summary>Fond (remplacement rapide)</summary>
+          <div class="chipRow" id="bgChips">
+            <button class="chipBtn" data-bg="#e5e7eb">Gris clair</button>
+            <button class="chipBtn" data-bg="#dceeff">Bleu clair</button>
+            <button class="chipBtn" data-bg="#e6f6e6">Vert clair</button>
+            <button class="chipBtn" data-bg="#ffffff">Blanc</button>
+          </div>
+          <div class="hint">
+            Choisis une teinte recommandée. Le blanc peut être refusé par
+            certains guichets FR.
+          </div>
+        </details>
+
+        <details>
+          <summary>Export</summary>
+          <div class="grid" style="margin-top: 8px">
+            <button id="btnExportSingle" class="primary" disabled>
+              Exporter 35×45 mm (PNG 300 DPI)
+            </button>
+            <button id="btnExportA4" disabled>Planche A4 (300 DPI)</button>
+            <button id="btnExport10x15" disabled>
+              Planche 10×15 cm / 4×6″ (300 DPI)
+            </button>
+            <button id="btnExport4x6" disabled>Planche 4×6 in (300 DPI)</button>
+          </div>
+          <div class="hint" style="margin-top: 6px">
+            Imprime à « taille réelle / 100 % », sans redimensionnement
+            automatique.
+          </div>
+        </details>
+
+        <details>
+          <summary>Guide conformité (rappel)</summary>
+          <ul class="hint" style="margin: 6px 0 0 14px; line-height: 1.4">
+            <li>Taille photo : <b>35×45 mm</b> (413×531 px à 300 DPI).</li>
+            <li>
+              Hauteur du visage (menton → sommet crâne) :
+              <b>32–36 mm</b> (cible 34 mm).
+            </li>
+            <li>
+              Tête droite : <b>yeux horizontaux ±2°</b> (outil « Aligner les
+              yeux »).
+            </li>
+            <li>
+              Fond <b>uni clair</b> (gris/bleu clair), sans ombre ni motif. Le
+              blanc peut être refusé.
+            </li>
+            <li>Visage net, expression neutre, bouche fermée, yeux ouverts.</li>
+            <li>
+              Pas de filtre, lunettes teintées, couvre‑chef (sauf cas
+              autorisés).
+            </li>
+          </ul>
+        </details>
+      </section>
+
+      <!-- CANVAS -->
+      <section class="panel canvasWrap">
+        <div class="legend">
+          <div>
+            Zone d'export : <b>35×45 mm</b> — 300 DPI (<span id="pxInfo"
+              >413×531</span
+            > px)
+          </div>
+          <div>Hauteur visage : <span id="facePx" class="badge">–</span></div>
+          <div>Yeux Δ : <span id="eyesBadge" class="badge">–</span></div>
+          <div>Conformité : <span id="okBadge" class="badge">Non</span></div>
+        </div>
+        <canvas id="preview" width="413" height="531"></canvas>
+        <div class="hint">
+          Astuce ergonomie : choisis un repère (ou clique dessus) puis
+          <b>maintiens le clic et déplace</b> pour ajuster. <b>Échap</b> pour
+          quitter le mode. Molette : zoom. Glisser : pan.
+        </div>
+      </section>
+    </div>
+
+    <script>
+      (function () {
+        // --- Constants (FR specs) ---
+        const DPI = 300;
+        const PX_PER_MM = DPI / 25.4;
+        const OUT_W = Math.round(35 * PX_PER_MM);
+        const OUT_H = Math.round(45 * PX_PER_MM);
+        const FACE_MIN = 32 * PX_PER_MM;
+        const FACE_MAX = 36 * PX_PER_MM;
+        const FACE_TARGET = 34 * PX_PER_MM;
+        const EYES_TOL_DEG = 2;
+
+        // --- DOM ---
+        const file = document.getElementById("file");
+        const can = document.getElementById("preview");
+        const ctx = can.getContext("2d");
+        const pxInfo = document.getElementById("pxInfo");
+        pxInfo.textContent = `${OUT_W}×${OUT_H}`;
+        const facePxEl = document.getElementById("facePx");
+        const eyesBadge = document.getElementById("eyesBadge");
+        const okBadge = document.getElementById("okBadge");
+        const btnChin = document.getElementById("btnChin");
+        const btnCrown = document.getElementById("btnCrown");
+        const btnEyeL = document.getElementById("btnEyeL");
+        const btnEyeR = document.getElementById("btnEyeR");
+        const btnAutoEyes = document.getElementById("btnAutoEyes");
+        const btnAuto = document.getElementById("btnAuto");
+        const btnCenter = document.getElementById("btnCenter");
+        const btnZoomIn = document.getElementById("btnZoomIn");
+        const btnZoomOut = document.getElementById("btnZoomOut");
+        const btnRotateL = document.getElementById("btnRotateL");
+        const btnRotateR = document.getElementById("btnRotateR");
+        const btnReset = document.getElementById("btnReset");
+        const btnExportSingle = document.getElementById("btnExportSingle");
+        const btnExportA4 = document.getElementById("btnExportA4");
+        const btnExport10x15 = document.getElementById("btnExport10x15");
+        const btnExport4x6 = document.getElementById("btnExport4x6");
+
+        const rotRange = document.getElementById("rotRange");
+        const rotMinus = document.getElementById("rotMinus");
+        const rotPlus = document.getElementById("rotPlus");
+        const rotLabel = document.getElementById("rotLabel");
+
+        // Détourage controls
+        const btnPickBg = document.getElementById("btnPickBg");
+        const btnResetSamples = document.getElementById("btnResetSamples");
+        const btnDetour = document.getElementById("btnDetour");
+        const btnClearMask = document.getElementById("btnClearMask");
+        const tolRange = document.getElementById("tolRange");
+        const softRange = document.getElementById("softRange");
+        const showMask = document.getElementById("showMask");
+        const sampleCount = document.getElementById("sampleCount");
+
+        const btnBrushAdd = document.getElementById("btnBrushAdd");
+        const btnBrushSub = document.getElementById("btnBrushSub");
+        const brushSize = document.getElementById("brushSize");
+        const btnUndo = document.getElementById("btnUndo");
+        const btnRedo = document.getElementById("btnRedo");
+        const chkDecontam = document.getElementById("chkDecontam");
+
+        // Fond chips (⚠️ cause racine des bugs quand absent)
+        const bgChips = document.getElementById("bgChips");
+        let bgColor = "#e5e7eb";
+
+        // --- Image / Transform state ---
+        let img = new Image();
+        let imgLoaded = false;
+        let rotationDeg = 0;
+        let scale = 1;
+        let tx = OUT_W / 2;
+        let ty = OUT_H / 2;
+
+        // Offscreens
+        let imgCanvas = document.createElement("canvas"),
+          imgCtx = imgCanvas.getContext("2d");
+        let maskCanvas = null,
+          maskCtx = null;
+        let subjectCanvas = null,
+          subjectCtx = null;
+        let maskTintCanvas = null;
+
+        // Landmarks (coord. image)
+        let chin = null,
+          crown = null,
+          eyeL = null,
+          eyeR = null;
+
+        // Interaction state
+        let mode = null; // 'chin'|'crown'|'eyeL'|'eyeR'|'pickBg'|'brushAdd'|'brushSub'|null
+        let isPanning = false;
+        let panStart = { x: 0, y: 0 };
+        let startTx = 0,
+          startTy = 0;
+        let isDraggingLM = false;
+        let dragType = null;
+        let isPainting = false;
+
+        let facePxCurrent = null;
+
+        let bgLABSamples = [];
+
+        const undoStack = [];
+        const redoStack = [];
+        const UNDO_LIMIT = 10;
+
+        // --- Helpers ---
+        function clamp(v, min, max) {
+          return Math.max(min, Math.min(max, v));
+        }
+        function rad(deg) {
+          return (deg * Math.PI) / 180;
+        }
+
+        function setExportsEnabled(ok) {
+          [btnExportSingle, btnExportA4, btnExport10x15, btnExport4x6].forEach(
+            (b) => (b.disabled = !ok)
+          );
+          okBadge.textContent = ok ? "Oui" : "Non";
+          okBadge.style.background = ok
+            ? "#0b1224"
+            : "linear-gradient(180deg,#ef4444,#dc2626)";
+        }
+
+        function updateModeUI() {
+          [
+            btnChin,
+            btnCrown,
+            btnEyeL,
+            btnEyeR,
+            btnBrushAdd,
+            btnBrushSub,
+            btnPickBg,
+          ].forEach((b) => b.classList.remove("activeMode"));
+          if (mode === "chin") btnChin.classList.add("activeMode");
+          else if (mode === "crown") btnCrown.classList.add("activeMode");
+          else if (mode === "eyeL") btnEyeL.classList.add("activeMode");
+          else if (mode === "eyeR") btnEyeR.classList.add("activeMode");
+          else if (mode === "pickBg") btnPickBg.classList.add("activeMode");
+          else if (mode === "brushAdd") btnBrushAdd.classList.add("activeMode");
+          else if (mode === "brushSub") btnBrushSub.classList.add("activeMode");
+        }
+
+        function eyesAngleDeg() {
+          if (!eyeL || !eyeR) return null;
+          const L = imageToCanvas(eyeL.x, eyeL.y);
+          const R = imageToCanvas(eyeR.x, eyeR.y);
+          return (Math.atan2(R.y - L.y, R.x - L.x) * 180) / Math.PI;
+        }
+
+        function rgb2lab(r, g, b) {
+          function f(u) {
+            u /= 255;
+            return u <= 0.04045
+              ? u / 12.92
+              : Math.pow((u + 0.055) / 1.055, 2.4);
+          }
+          let R = f(r),
+            G = f(g),
+            B = f(b);
+          let X = R * 0.4124564 + G * 0.3575761 + B * 0.1804375;
+          let Y = R * 0.2126729 + G * 0.7151522 + B * 0.072175;
+          let Z = R * 0.0193339 + G * 0.119192 + B * 0.9503041;
+          X /= 0.95047;
+          Z /= 1.08883;
+          function f2(t) {
+            return t > 0.008856 ? Math.pow(t, 1 / 3) : 7.787 * t + 16 / 116;
+          }
+          let fx = f2(X),
+            fy = f2(Y),
+            fz = f2(Z);
+          return { L: 116 * fy - 16, a: 500 * (fx - fy), b: 200 * (fy - fz) };
+        }
+
+        function draw() {
+          ctx.save();
+          ctx.fillStyle = bgColor || "#e5e7eb";
+          ctx.fillRect(0, 0, can.width, can.height);
+          ctx.restore();
+
+          if (imgLoaded) {
+            const src = subjectCanvas || img;
+            ctx.save();
+            ctx.translate(tx, ty);
+            ctx.rotate(rad(rotationDeg));
+            ctx.scale(scale, scale);
+            if (src === img) {
+              ctx.drawImage(img, -img.width / 2, -img.height / 2);
+            } else {
+              ctx.drawImage(
+                subjectCanvas,
+                -subjectCanvas.width / 2,
+                -subjectCanvas.height / 2
+              );
+            }
+            ctx.restore();
+          }
+
+          // Cadre + jauges
+          ctx.save();
+          ctx.strokeStyle = "rgba(56,189,248,0.9)";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(1, 1, OUT_W - 2, OUT_H - 2);
+          const midX = OUT_W - 18;
+          ctx.strokeStyle = "rgba(148,163,184,0.7)";
+          ctx.beginPath();
+          ctx.moveTo(midX, 8);
+          ctx.lineTo(midX, OUT_H - 8);
+          ctx.stroke();
+          ctx.fillStyle = "rgba(34,197,94,0.25)";
+          const rangeTop = OUT_H / 2 - FACE_MAX / 2;
+          ctx.fillRect(midX - 4, rangeTop, 8, FACE_MAX);
+          ctx.fillStyle = "rgba(56,189,248,0.35)";
+          const targetTop = OUT_H / 2 - FACE_TARGET / 2;
+          ctx.fillRect(midX - 6, targetTop, 12, 2);
+          ctx.restore();
+
+          const chinC = chin ? imageToCanvas(chin.x, chin.y) : null;
+          const crownC = crown ? imageToCanvas(crown.x, crown.y) : null;
+          facePxCurrent = null;
+          if (chinC && crownC) {
+            ctx.save();
+            ctx.strokeStyle = "#22c55e";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(chinC.x, chinC.y);
+            ctx.lineTo(crownC.x, crownC.y);
+            ctx.stroke();
+            drawMarker(chinC.x, chinC.y, "#22c55e");
+            drawMarker(crownC.x, crownC.y, "#22c55e");
+            facePxCurrent = Math.hypot(crownC.x - chinC.x, crownC.y - chinC.y);
+            facePxEl.textContent = `${facePxCurrent.toFixed(0)} px (${(
+              facePxCurrent / PX_PER_MM
+            ).toFixed(1)} mm)`;
+            facePxEl.style.background =
+              facePxCurrent < FACE_MIN || facePxCurrent > FACE_MAX
+                ? "linear-gradient(180deg,#ef4444,#dc2626)"
+                : "#0b1224";
+            ctx.restore();
+          } else {
+            facePxEl.textContent = "–";
+            facePxEl.style.background = "#0b1224";
+          }
+
+          // Ligne des yeux
+          const ang = eyesAngleDeg();
+          if (ang === null) {
+            eyesBadge.textContent = "–";
+            eyesBadge.style.background = "#0b1224";
+          } else {
+            const L = imageToCanvas(eyeL.x, eyeL.y),
+              R = imageToCanvas(eyeR.x, eyeR.y);
+            const midY = (L.y + R.y) / 2;
+            const ok = Math.abs(ang) <= EYES_TOL_DEG;
+            eyesBadge.textContent = `${ang.toFixed(1)}° ${ok ? "(OK)" : "(✗)"}`;
+            eyesBadge.style.background = ok
+              ? "#0b1224"
+              : "linear-gradient(180deg,#ef4444,#dc2626)";
+            ctx.save();
+            ctx.strokeStyle = ok ? "#22c55e" : "#ef4444";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(L.x, L.y);
+            ctx.lineTo(R.x, R.y);
+            ctx.stroke();
+            drawMarker(L.x, L.y, ctx.strokeStyle);
+            drawMarker(R.x, R.y, ctx.strokeStyle);
+            ctx.setLineDash([6, 4]);
+            ctx.strokeStyle = "rgba(148,163,184,0.75)";
+            ctx.beginPath();
+            ctx.moveTo(8, midY);
+            ctx.lineTo(OUT_W - 8, midY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+          }
+
+          // Overlay masque
+          if (showMask.checked && maskCanvas) {
+            if (!maskTintCanvas) {
+              maskTintCanvas = document.createElement("canvas");
+              maskTintCanvas.width = maskCanvas.width;
+              maskTintCanvas.height = maskCanvas.height;
+              const mctx = maskTintCanvas.getContext("2d");
+              mctx.clearRect(0, 0, maskTintCanvas.width, maskTintCanvas.height);
+              mctx.drawImage(maskCanvas, 0, 0);
+              mctx.globalCompositeOperation = "source-in";
+              mctx.fillStyle = "rgba(255,0,0,0.35)";
+              mctx.fillRect(0, 0, maskTintCanvas.width, maskTintCanvas.height);
+              mctx.globalCompositeOperation = "source-over";
+            }
+            ctx.save();
+            ctx.translate(tx, ty);
+            ctx.rotate(rad(rotationDeg));
+            ctx.scale(scale, scale);
+            ctx.drawImage(
+              maskTintCanvas,
+              -maskTintCanvas.width / 2,
+              -maskTintCanvas.height / 2
+            );
+            ctx.restore();
+          }
+
+          const compliant = isCompliant();
+          setExportsEnabled(compliant);
+
+          if (mode) {
+            ctx.save();
+            ctx.fillStyle = "rgba(17,24,39,.85)";
+            ctx.fillRect(8, 8, OUT_W * 0.96, 32);
+            ctx.fillStyle = "#e5e7eb";
+            ctx.font =
+              "12.5px system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif";
+            let msg = "Maintiens le clic et déplace pour ajuster : ";
+            if (mode === "chin") msg += "menton";
+            if (mode === "crown") msg += "sommet du crâne";
+            if (mode === "eyeL") msg += "œil gauche";
+            if (mode === "eyeR") msg += "œil droit";
+            if (mode === "pickBg")
+              msg = "Pipette : clique plusieurs zones de FOND";
+            if (mode === "brushAdd")
+              msg = "Pinceau + : peindre les zones à garder";
+            if (mode === "brushSub")
+              msg = "Pinceau − : peindre les zones à retirer";
+            ctx.fillText(msg, 14, 28);
+            ctx.restore();
+          }
+        }
+
+        function isCompliant() {
+          const base =
+            imgLoaded &&
+            chin &&
+            crown &&
+            facePxCurrent !== null &&
+            facePxCurrent >= FACE_MIN &&
+            facePxCurrent <= FACE_MAX;
+          const ang = eyesAngleDeg();
+          if (ang !== null && Math.abs(ang) > EYES_TOL_DEG) return false;
+          return base;
+        }
+
+        function drawMarker(x, y, color) {
+          ctx.save();
+          ctx.strokeStyle = color;
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x, y, 10, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Coords
+        function canvasToImage(cx, cy) {
+          const dx = cx - tx;
+          const dy = cy - ty;
+          const s = 1 / scale;
+          const ang = rad(-rotationDeg);
+          const rx = dx * Math.cos(ang) - dy * Math.sin(ang);
+          const ry = dx * Math.sin(ang) + dy * Math.cos(ang);
+          return { x: rx * s + img.width / 2, y: ry * s + img.height / 2 };
+        }
+        function imageToCanvas(ix, iy) {
+          const dx = ix - img.width / 2;
+          const dy = iy - img.height / 2;
+          const ang = rad(rotationDeg);
+          const rx = dx * Math.cos(ang) - dy * Math.sin(ang);
+          const ry = dx * Math.sin(ang) + dy * Math.cos(ang);
+          return { x: rx * scale + tx, y: ry * scale + ty };
+        }
+
+        // Landmarks helpers
+        function hitTestLandmark(cx, cy) {
+          const R = 12;
+          const pts = [];
+          if (chin) {
+            const c = imageToCanvas(chin.x, chin.y);
+            pts.push(["chin", c]);
+          }
+          if (crown) {
+            const c = imageToCanvas(crown.x, crown.y);
+            pts.push(["crown", c]);
+          }
+          if (eyeL) {
+            const c = imageToCanvas(eyeL.x, eyeL.y);
+            pts.push(["eyeL", c]);
+          }
+          if (eyeR) {
+            const c = imageToCanvas(eyeR.x, eyeR.y);
+            pts.push(["eyeR", c]);
+          }
+          for (const [name, p] of pts) {
+            if (Math.hypot(cx - p.x, cy - p.y) <= R) return name;
+          }
+          return null;
+        }
+        function setLandmark(name, pImg) {
+          if (name === "chin") chin = pImg;
+          else if (name === "crown") crown = pImg;
+          else if (name === "eyeL") eyeL = pImg;
+          else if (name === "eyeR") eyeR = pImg;
+        }
+
+        function autoAdjust() {
+          if (!imgLoaded || !chin || !crown) return;
+          const chinC = imageToCanvas(chin.x, chin.y);
+          const crownC = imageToCanvas(crown.x, crown.y);
+          const current = Math.hypot(crownC.x - chinC.x, crownC.y - chinC.y);
+          if (current <= 0.1) return;
+          const factor = FACE_TARGET / current;
+          scale *= factor;
+          const crownCanvas = imageToCanvas(crown.x, crown.y);
+          const targetTop = 4 * PX_PER_MM;
+          tx += OUT_W / 2 - crownCanvas.x;
+          ty += targetTop - crownCanvas.y;
+          draw();
+        }
+
+        function autoEyes() {
+          const ang = eyesAngleDeg();
+          if (ang === null) return;
+          rotationDeg -= ang;
+          rotationDeg = clamp(rotationDeg, -10, 10);
+          rotRange.value = rotationDeg;
+          rotLabel.textContent = `${rotationDeg.toFixed(1)}°`;
+          draw();
+        }
+
+        function center() {
+          tx = OUT_W / 2;
+          ty = OUT_H / 2;
+          draw();
+        }
+
+        function reset(all = true) {
+          scale = Math.min(OUT_W / img.width, OUT_H / img.height) || 1;
+          rotationDeg = 0;
+          rotRange.value = 0;
+          rotLabel.textContent = "0.0°";
+          center();
+          if (all) {
+            chin = null;
+            crown = null;
+            eyeL = null;
+            eyeR = null;
+            clearMask();
+            bgLABSamples = [];
+            sampleCount.textContent = "0";
+            btnDetour.disabled = true;
+          }
+          draw();
+        }
+
+        function loadImage(fileObj) {
+          try {
+            const url = URL.createObjectURL(fileObj);
+            img = new Image();
+            img.onload = () => {
+              imgLoaded = true;
+              imgCanvas.width = img.width;
+              imgCanvas.height = img.height;
+              imgCtx.drawImage(img, 0, 0);
+              reset(true);
+              URL.revokeObjectURL(url);
+            };
+            img.onerror = async () => {
+              try {
+                const fr = new FileReader();
+                fr.onload = () => {
+                  img.onload = () => {
+                    imgLoaded = true;
+                    imgCanvas.width = img.width;
+                    imgCanvas.height = img.height;
+                    imgCtx.drawImage(img, 0, 0);
+                    reset(true);
+                  };
+                  img.src = fr.result;
+                };
+                fr.onerror = () => {
+                  alert("Impossible de lire ce fichier image.");
+                };
+                fr.readAsDataURL(fileObj);
+              } catch (e) {
+                console.error(e);
+                alert("Impossible de lire ce fichier image.");
+              }
+              URL.revokeObjectURL(url);
+            };
+            img.src = url;
+          } catch (err) {
+            console.error(err);
+            alert("Erreur lors du chargement de l'image.");
+          }
+        }
+
+        // --- Détourage ---
+        function clearMask() {
+          maskCanvas = null;
+          maskCtx = null;
+          subjectCanvas = null;
+          subjectCtx = null;
+          maskTintCanvas = null;
+          btnClearMask.disabled = true;
+          draw();
+        }
+        function pushUndo() {
+          if (!maskCanvas) return;
+          const imgD = maskCtx.getImageData(
+            0,
+            0,
+            maskCanvas.width,
+            maskCanvas.height
+          );
+          undoStack.push(imgD);
+          if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+          btnUndo.disabled = false;
+          redoStack.length = 0;
+          btnRedo.disabled = true;
+        }
+
+        function pickBgAt(ix, iy) {
+          if (!imgLoaded) return;
+          const x = Math.round(clamp(ix, 0, imgCanvas.width - 1));
+          const y = Math.round(clamp(iy, 0, imgCanvas.height - 1));
+          const d = imgCtx.getImageData(x, y, 1, 1).data;
+          bgLABSamples.push(rgb2lab(d[0], d[1], d[2]));
+          sampleCount.textContent = String(bgLABSamples.length);
+          btnDetour.disabled = bgLABSamples.length === 0;
+        }
+
+        function generateMask() {
+          if (bgLABSamples.length === 0) return;
+          const W = imgCanvas.width,
+            H = imgCanvas.height;
+          maskCanvas = document.createElement("canvas");
+          maskCanvas.width = W;
+          maskCanvas.height = H;
+          maskCtx = maskCanvas.getContext("2d");
+          const src = imgCtx.getImageData(0, 0, W, H);
+          const dst = maskCtx.createImageData(W, H);
+          const tol = parseFloat(tolRange.value),
+            soft = parseFloat(softRange.value);
+          const t0 = Math.max(0, tol - soft),
+            t1 = tol + soft + 1e-6;
+          for (let i = 0; i < src.data.length; i += 4) {
+            const r = src.data[i],
+              g = src.data[i + 1],
+              b = src.data[i + 2];
+            const lab = rgb2lab(r, g, b);
+            let distMin = 1e9;
+            for (const s of bgLABSamples) {
+              const dL = lab.L - s.L,
+                da = lab.a - s.a,
+                db = lab.b - s.b;
+              const d = Math.sqrt(dL * dL + da * da + db * db);
+              if (d < distMin) distMin = d;
+            }
+            let a = 0;
+            if (distMin <= t0) a = 0;
+            else if (distMin >= t1) a = 255;
+            else a = Math.round(255 * ((distMin - t0) / (t1 - t0)));
+            dst.data[i] = 255;
+            dst.data[i + 1] = 255;
+            dst.data[i + 2] = 255;
+            dst.data[i + 3] = a;
+          }
+          maskCtx.putImageData(dst, 0, 0);
+          rebuildSubject();
+          maskTintCanvas = null;
+          draw();
+          btnClearMask.disabled = false;
+        }
+
+        function rebuildSubject() {
+          if (!maskCanvas) {
+            subjectCanvas = null;
+            subjectCtx = null;
+            return;
+          }
+          const W = imgCanvas.width,
+            H = imgCanvas.height;
+          subjectCanvas = document.createElement("canvas");
+          subjectCanvas.width = W;
+          subjectCanvas.height = H;
+          subjectCtx = subjectCanvas.getContext("2d");
+          subjectCtx.clearRect(0, 0, W, H);
+          subjectCtx.drawImage(imgCanvas, 0, 0);
+          subjectCtx.globalCompositeOperation = "destination-in";
+          subjectCtx.drawImage(maskCanvas, 0, 0);
+          subjectCtx.globalCompositeOperation = "source-over";
+          maskTintCanvas = null;
+        }
+
+        function paintAt(ix, iy, add) {
+          if (!imgLoaded) return;
+          if (!maskCanvas) {
+            maskCanvas = document.createElement("canvas");
+            maskCanvas.width = imgCanvas.width;
+            maskCanvas.height = imgCanvas.height;
+            maskCtx = maskCanvas.getContext("2d");
+            const id = maskCtx.createImageData(
+              maskCanvas.width,
+              maskCanvas.height
+            );
+            const fillA = add ? 0 : 255;
+            for (let i = 0; i < id.data.length; i += 4) {
+              id.data[i] = 255;
+              id.data[i + 1] = 255;
+              id.data[i + 2] = 255;
+              id.data[i + 3] = fillA;
+            }
+            maskCtx.putImageData(id, 0, 0);
+          }
+          pushUndo();
+          const r = parseInt(brushSize.value, 10);
+          const g = maskCtx.createRadialGradient(ix, iy, 0, ix, iy, r);
+          if (add) {
+            g.addColorStop(0, "rgba(255,255,255,1)");
+            g.addColorStop(1, "rgba(255,255,255,0.2)");
+            maskCtx.globalCompositeOperation = "source-over";
+          } else {
+            g.addColorStop(0, "rgba(0,0,0,1)");
+            g.addColorStop(1, "rgba(0,0,0,0.2)");
+            maskCtx.globalCompositeOperation = "destination-out";
+          }
+          maskCtx.fillStyle = g;
+          maskCtx.beginPath();
+          maskCtx.arc(ix, iy, r, 0, Math.PI * 2);
+          maskCtx.fill();
+          maskCtx.globalCompositeOperation = "source-over";
+          rebuildSubject();
+          draw();
+          btnUndo.disabled = false;
+          btnClearMask.disabled = false;
+        }
+
+        function compositeSubject(octx) {
+          const src = subjectCanvas || img;
+          if (src === img) {
+            octx.drawImage(img, -img.width / 2, -img.height / 2);
+            return;
+          }
+          if (!chkDecontam.checked) {
+            octx.drawImage(
+              subjectCanvas,
+              -subjectCanvas.width / 2,
+              -subjectCanvas.height / 2
+            );
+            return;
+          }
+          const W = subjectCanvas.width,
+            H = subjectCanvas.height;
+          const tmp = document.createElement("canvas");
+          tmp.width = W;
+          tmp.height = H;
+          const tctx = tmp.getContext("2d");
+          tctx.drawImage(subjectCanvas, 0, 0);
+          const imgD = tctx.getImageData(0, 0, W, H);
+          const data = imgD.data;
+          const bg = hexToRgb(bgColor);
+          for (let i = 0; i < data.length; i += 4) {
+            const a = data[i + 3] / 255;
+            if (a > 0 && a < 1) {
+              const k = Math.pow(1 - a, 0.7);
+              data[i] = Math.round(data[i] * (1 - k) + bg.r * k);
+              data[i + 1] = Math.round(data[i + 1] * (1 - k) + bg.g * k);
+              data[i + 2] = Math.round(data[i + 2] * (1 - k) + bg.b * k);
+            }
+          }
+          tctx.putImageData(imgD, 0, 0);
+          octx.drawImage(tmp, -W / 2, -H / 2);
+        }
+
+        function hexToRgb(hex) {
+          const s = hex.replace("#", "");
+          const n = parseInt(s, 16);
+          if (s.length === 6)
+            return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+          return { r: 229, g: 231, b: 235 };
+        }
+
+        // Export
+        function exportSingle() {
+          const out = document.createElement("canvas");
+          out.width = OUT_W;
+          out.height = OUT_H;
+          const octx = out.getContext("2d");
+          octx.fillStyle = bgColor || "#e5e7eb";
+          octx.fillRect(0, 0, OUT_W, OUT_H);
+          octx.save();
+          octx.translate(tx, ty);
+          octx.rotate(rad(rotationDeg));
+          octx.scale(scale, scale);
+          compositeSubject(octx);
+          octx.restore();
+          downloadCanvas(out, "photo_identite_FR_35x45mm_300dpi.png");
+        }
+        function gridFor(w, h) {
+          const MARG = Math.round(4 * PX_PER_MM);
+          const pad = Math.round(2 * PX_PER_MM);
+          const cellW = OUT_W + pad;
+          const cellH = OUT_H + pad;
+          const cols = Math.max(1, Math.floor((w - 2 * MARG + pad) / cellW));
+          const rows = Math.max(1, Math.floor((h - 2 * MARG + pad) / cellH));
+          const usedW = cols * cellW - pad;
+          const usedH = rows * cellH - pad;
+          const startX = Math.floor((w - usedW) / 2);
+          const startY = Math.floor((h - usedH) / 2);
+          return { MARG, pad, cellW, cellH, cols, rows, startX, startY };
+        }
+        function makeSheet(w, h, filename) {
+          const sheet = document.createElement("canvas");
+          sheet.width = w;
+          sheet.height = h;
+          const sctx = sheet.getContext("2d");
+          sctx.fillStyle = "#ffffff";
+          sctx.fillRect(0, 0, w, h);
+          const tile = document.createElement("canvas");
+          tile.width = OUT_W;
+          tile.height = OUT_H;
+          const tctx = tile.getContext("2d");
+          tctx.fillStyle = bgColor || "#e5e7eb";
+          tctx.fillRect(0, 0, OUT_W, OUT_H);
+          tctx.save();
+          tctx.translate(tx, ty);
+          tctx.rotate(rad(rotationDeg));
+          tctx.scale(scale, scale);
+          compositeSubject(tctx);
+          tctx.restore();
+          const g = gridFor(w, h);
+          for (let r = 0; r < g.rows; r++)
+            for (let c = 0; c < g.cols; c++) {
+              const x = g.startX + c * g.cellW;
+              const y = g.startY + r * g.cellH;
+              sctx.drawImage(tile, x, y);
+            }
+          downloadCanvas(sheet, filename);
+        }
+        function export10x15() {
+          const W = 1200,
+            H = 1800;
+          const g1 = gridFor(W, H),
+            g2 = gridFor(H, W);
+          if (g2.cols * g2.rows > g1.cols * g1.rows)
+            makeSheet(H, W, "planche_10x15cm_300dpi.png");
+          else makeSheet(W, H, "planche_10x15cm_300dpi.png");
+        }
+        function export4x6() {
+          makeSheet(1200, 1800, "planche_4x6in_300dpi.png");
+        }
+        function downloadCanvas(c, filename) {
+          c.toBlob((blob) => {
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+          }, "image/png");
+        }
+
+        // --- Events ---
+        ["change", "input"].forEach((evt) => {
+          file.addEventListener(evt, (e) => {
+            const f = (e.target.files && e.target.files[0]) || null;
+            if (f) loadImage(f);
+          });
+        });
+        btnChin.addEventListener("click", () => {
+          mode = "chin";
+          updateModeUI();
+          draw();
+        });
+        btnCrown.addEventListener("click", () => {
+          mode = "crown";
+          updateModeUI();
+          draw();
+        });
+        btnEyeL.addEventListener("click", () => {
+          mode = "eyeL";
+          updateModeUI();
+          draw();
+        });
+        btnEyeR.addEventListener("click", () => {
+          mode = "eyeR";
+          updateModeUI();
+          draw();
+        });
+        btnAutoEyes.addEventListener("click", autoEyes);
+
+        rotRange.addEventListener("input", () => {
+          rotationDeg = parseFloat(rotRange.value);
+          rotLabel.textContent = `${rotationDeg.toFixed(1)}°`;
+          draw();
+        });
+        rotMinus.addEventListener("click", () => {
+          rotRange.value = (parseFloat(rotRange.value) - 1).toString();
+          rotationDeg = parseFloat(rotRange.value);
+          rotLabel.textContent = `${rotationDeg.toFixed(1)}°`;
+          draw();
+        });
+        rotPlus.addEventListener("click", () => {
+          rotRange.value = (parseFloat(rotRange.value) + 1).toString();
+          rotationDeg = parseFloat(rotRange.value);
+          rotLabel.textContent = `${rotationDeg.toFixed(1)}°`;
+          draw();
+        });
+
+        btnAuto.addEventListener("click", autoAdjust);
+        btnCenter.addEventListener("click", center);
+        btnZoomIn.addEventListener("click", () => {
+          scale *= 1.05;
+          draw();
+        });
+        btnZoomOut.addEventListener("click", () => {
+          scale /= 1.05;
+          draw();
+        });
+        btnRotateL.addEventListener("click", () => {
+          rotationDeg = (rotationDeg - 90) % 360;
+          rotRange.value = rotationDeg;
+          rotLabel.textContent = `${Number(rotRange.value).toFixed(1)}°`;
+          draw();
+        });
+        btnRotateR.addEventListener("click", () => {
+          rotationDeg = (rotationDeg + 90) % 360;
+          rotRange.value = rotationDeg;
+          rotLabel.textContent = `${Number(rotRange.value).toFixed(1)}°`;
+          draw();
+        });
+        btnReset.addEventListener("click", () => reset(false));
+        btnExportSingle.addEventListener("click", exportSingle);
+        btnExportA4.addEventListener("click", () =>
+          makeSheet(2480, 3508, "planche_A4_300dpi.png")
+        );
+        btnExport10x15.addEventListener("click", export10x15);
+        btnExport4x6.addEventListener("click", export4x6);
+
+        // Détourage
+        btnPickBg.addEventListener("click", () => {
+          mode = "pickBg";
+          updateModeUI();
+          draw();
+        });
+        btnResetSamples.addEventListener("click", () => {
+          bgLABSamples = [];
+          sampleCount.textContent = "0";
+          btnDetour.disabled = true;
+        });
+        btnDetour.addEventListener("click", () => generateMask());
+        btnClearMask.addEventListener("click", () => {
+          clearMask();
+          undoStack.length = 0;
+          redoStack.length = 0;
+          btnUndo.disabled = true;
+          btnRedo.disabled = true;
+        });
+        tolRange.addEventListener("input", () => {
+          if (imgLoaded && (maskCanvas || bgLABSamples.length > 0))
+            generateMask();
+        });
+        softRange.addEventListener("input", () => {
+          if (imgLoaded && (maskCanvas || bgLABSamples.length > 0))
+            generateMask();
+        });
+        showMask.addEventListener("change", draw);
+
+        btnBrushAdd.addEventListener("click", () => {
+          mode = "brushAdd";
+          showMask.checked = true;
+          updateModeUI();
+          draw();
+        });
+        btnBrushSub.addEventListener("click", () => {
+          mode = "brushSub";
+          showMask.checked = true;
+          updateModeUI();
+          draw();
+        });
+
+        btnUndo.addEventListener("click", () => {
+          if (!undoStack.length) return;
+          const last = undoStack.pop();
+          redoStack.push(
+            maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height)
+          );
+          maskCtx.putImageData(last, 0, 0);
+          rebuildSubject();
+          draw();
+          btnRedo.disabled = false;
+          if (!undoStack.length) btnUndo.disabled = true;
+        });
+        btnRedo.addEventListener("click", () => {
+          if (!redoStack.length) return;
+          const cur = redoStack.pop();
+          undoStack.push(
+            maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height)
+          );
+          maskCtx.putImageData(cur, 0, 0);
+          rebuildSubject();
+          draw();
+          btnUndo.disabled = false;
+          if (!redoStack.length) btnRedo.disabled = true;
+        });
+
+        if (bgChips) {
+          bgChips.addEventListener("click", (e) => {
+            const b = e.target.closest(".chipBtn");
+            if (!b) return;
+            [...bgChips.children].forEach((x) => x.classList.remove("active"));
+            b.classList.add("active");
+            bgColor = b.dataset.bg;
+            draw();
+          });
+          // défaut : premier chip actif
+          if (bgChips.children.length > 0) {
+            bgChips.children[0].classList.add("active");
+          }
+        }
+
+        // Canvas interactions
+        can.addEventListener("mousedown", (e) => {
+          const rect = can.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const p = canvasToImage(x, y);
+          if (mode === "pickBg") {
+            pickBgAt(p.x, p.y);
+            draw();
+            return;
+          }
+          if (mode === "brushAdd") {
+            isPainting = true;
+            paintAt(p.x, p.y, true);
+            return;
+          }
+          if (mode === "brushSub") {
+            isPainting = true;
+            paintAt(p.x, p.y, false);
+            return;
+          }
+          if (
+            mode &&
+            (mode === "chin" ||
+              mode === "crown" ||
+              mode === "eyeL" ||
+              mode === "eyeR")
+          ) {
+            setLandmark(mode, p);
+            isDraggingLM = true;
+            dragType = mode;
+            draw();
+            return;
+          }
+          const hit = hitTestLandmark(x, y);
+          if (hit) {
+            mode = hit;
+            updateModeUI();
+            setLandmark(mode, p);
+            isDraggingLM = true;
+            dragType = mode;
+            draw();
+            return;
+          }
+          // Pan par défaut si aucun mode
+          isPanning = true;
+          panStart = { x, y };
+          startTx = tx;
+          startTy = ty;
+        });
+        window.addEventListener("mouseup", () => {
+          isPanning = false;
+          isDraggingLM = false;
+          dragType = null;
+          isPainting = false;
+        });
+        can.addEventListener("mousemove", (e) => {
+          const rect = can.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          if (isPainting && (mode === "brushAdd" || mode === "brushSub")) {
+            const p = canvasToImage(x, y);
+            paintAt(p.x, p.y, mode === "brushAdd");
+            return;
+          }
+          if (isDraggingLM && dragType) {
+            const p = canvasToImage(x, y);
+            setLandmark(dragType, p);
+            draw();
+            return;
+          }
+          if (!isPanning) return;
+          const dx = x - panStart.x;
+          const dy = y - panStart.y;
+          tx = startTx + dx;
+          ty = startTy + dy;
+          draw();
+        });
+        can.addEventListener(
+          "wheel",
+          (e) => {
+            e.preventDefault();
+            const factor = Math.pow(1.001, -e.deltaY);
+            const rect = can.getBoundingClientRect();
+            const cx = e.clientX - rect.left;
+            const cy = e.clientY - rect.top;
+            const pre = canvasToImage(cx, cy);
+            scale *= factor;
+            scale = clamp(scale, 0.05, 20);
+            const post = imageToCanvas(pre.x, pre.y);
+            tx += cx - post.x;
+            ty += cy - post.y;
+            draw();
+          },
+          { passive: false }
+        );
+
+        window.addEventListener("keydown", (e) => {
+          const k = e.key;
+          if (k === "1") {
+            mode = "chin";
+            updateModeUI();
+            draw();
+          } else if (k === "2") {
+            mode = "crown";
+            updateModeUI();
+            draw();
+          } else if (k === "3") {
+            mode = "eyeL";
+            updateModeUI();
+            draw();
+          } else if (k === "4") {
+            mode = "eyeR";
+            updateModeUI();
+            draw();
+          } else if (k === "Escape") {
+            mode = null;
+            isPainting = false;
+            isDraggingLM = false;
+            isPanning = false;
+            updateModeUI();
+            draw();
+          } else if (k === "ArrowLeft") {
+            tx -= 1;
+            draw();
+          } else if (k === "ArrowRight") {
+            tx += 1;
+            draw();
+          } else if (k === "ArrowUp") {
+            ty -= 1;
+            draw();
+          } else if (k === "ArrowDown") {
+            ty += 1;
+            draw();
+          } else if (k === "+") {
+            scale *= 1.02;
+            draw();
+          } else if (k === "-") {
+            scale /= 1.02;
+            draw();
+          } else if (k === "r" || k === "R") {
+            reset(false);
+          }
+        });
+
+        // Initial draw
+        draw();
+      })();
+    </script>
+  </body>
+</html>
